@@ -1,0 +1,24 @@
+{
+  "name": "AIRR Community Tutorial – RStudio",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "forwardPorts": [8787],
+  "portsAttributes": {
+    "8787": {
+      "label": "RStudio Server",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "containerEnv": {
+    "PASSWORD": "tutorial"
+  },
+  "remoteUser": "root",
+  "postCreateCommand": "echo '✅ Container ready! Click the Ports tab and open port 8787. Login: rstudio / tutorial'",
+  "customizations": {
+    "codespaces": {
+      "machine": "standardLinux32gb"
+    }
+  }
+}
