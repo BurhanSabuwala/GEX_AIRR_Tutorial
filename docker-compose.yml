@@ -1,0 +1,10 @@
+services:
+  airrc-tutorial:
+    image: burhansabuwala/airrc_gex_airr_joint_analysis
+    container_name: airrc_gex_airr_joint_analysis
+    ports:
+      - "8787:8787"
+    environment:
+      - PASSWORD=tutorial
+    volumes:
+      - ./data:/home/rstudio/tutorial/data
