@@ -186,7 +186,7 @@ DimPlot(obj, group.by = "cell_type_majority_vote", label = TRUE) + NoLegend()
 This plot shows which cells on the UMAP have a matched BCR V(D)J sequence (`has_airr` = `TRUE`). Systematic gaps in coverage may indicate technical dropout or that certain cell types (e.g., plasma cells) produce fewer recoverable sequences.
 
 ```{r}
-FeaturePlot(obj, features = c("has_airr"))
+DimPlot(obj, group.by = "has_airr", pt.size = 0.3) + labs(title = "Has AIRR data?") + theme_classic()
 ```
 
 ## SHM Frequency on UMAP
@@ -252,40 +252,6 @@ b_meta %>%
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
 ```
 
-## CDR3 Length Distribution
-
-CDR3 length (`cdr3_aa_length`) is visualized on the UMAP and compared across cell types and timepoints. CDR3 length can reflect antigen selection — shorter CDR3s are sometimes enriched in antigen-experienced B cells due to selective pressure, while longer CDR3s may be associated with naïve or polyreactive B cells.
-
-```{r}
-# --- Plot 1: CDR3 length on UMAP ---
-FeaturePlot(obj, features = "cdr3_aa_length", pt.size = 0.3, order = TRUE) +
-  scale_colour_viridis_c() +
-  labs(title = "CDR3 Length (aa) on UMAP")
-
-# --- Plot 2: CDR3 length on UMAP split by timepoint ---
-FeaturePlot(obj, features = "cdr3_aa_length", pt.size = 0.3, 
-            order = TRUE, split.by = "timepoint") &
-  scale_colour_viridis_c() &
-  labs(title = "CDR3 Length by Timepoint")
-
-
-# --- Plot 3: CDR3 length by cell type, faceted by timepoint ---
-obj@meta.data %>%
-  filter(has_airr == TRUE, !is.na(cdr3_aa_length),
-         cell_type_majority_vote %in% b_cell_types) %>%
-  mutate(timepoint_label = ifelse(timepoint == "0", "Day 0", "Day 7")) %>%
-  ggplot(aes(x = cell_type_majority_vote, y = cdr3_aa_length, 
-             fill = timepoint_label)) +
-  geom_violin(alpha = 0.7, trim = FALSE, position = position_dodge(0.8)) +
-  geom_boxplot(width = 0.1, outlier.shape = NA, fill = "white",
-               position = position_dodge(0.8)) +
-  scale_fill_manual(values = c("Day 0" = "steelblue", "Day 7" = "firebrick")) +
-  labs(title = "CDR3 Length by Cell Type: Day 0 vs Day 7",
-       x = NULL, y = "CDR3 Length (aa)", fill = "Timepoint") +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1))
-
-```
 
 ## Cell type composition, SHM frequency, and isotype distribution by timepoint
 
@@ -318,7 +284,10 @@ cluster_meta %>%
   theme_bw() +
   theme(legend.position = "none",
         strip.text = element_text(size = 8))
+```
 
+Characterizing the shift in cell type composition between Day 0 and Day 7.
+```{r}
 # --- Plot 2: Cell type composition shift per timepoint ---
 cluster_meta %>%
   count(timepoint_label, cluster) %>%
@@ -331,7 +300,11 @@ cluster_meta %>%
   labs(title = "Cell Type Composition: Day 0 vs Day 7",
        x = NULL, y = "Percentage (%)", fill = "Cell Type") +
   theme_bw()
+```
 
+
+
+```{r}
 # --- Plot 3: Cell type absolute counts per timepoint ---
 cluster_meta %>%
   count(timepoint_label, cluster) %>%
@@ -347,7 +320,10 @@ cluster_meta %>%
        x = NULL, y = "% of Cells", fill = "Timepoint") +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 30, hjust = 1))
+```
 
+Isotype distribution shift between Day 0 and Day 7 across the four B cell populations.
+```{r}
 cluster_meta %>%
   filter(isotype %in% c("IGHM", "IGHD", "IGHA", "IGHG", "IGHE"),
          !is.na(isotype)) %>%
