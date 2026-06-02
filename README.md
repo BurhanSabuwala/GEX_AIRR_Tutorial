@@ -1,5 +1,4 @@
-# AIRR Community Meeting Tutorial
-## Joint Analysis of AIRR and scRNA-seq Data in R
+# AIRRC 2026 Tutorial: Joint Analysis of AIRR and scRNA-seq Data in R
 
 **Authors:** Burhan Sabuwala, Jian Xing
 
